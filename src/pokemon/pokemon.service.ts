@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common/exceptions';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
-import { isContext } from 'vm';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
@@ -17,6 +17,14 @@ export class PokemonService {
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
   ) {}
+
+  async createMany(createPokemons: CreatePokemonDto[]) {
+    try {
+      await this.pokemonModel.insertMany(createPokemons);
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
 
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase();
@@ -29,8 +37,10 @@ export class PokemonService {
     }
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
+  findAll(paginationDto: PaginationDto) {
+    const { limit = 2, page = 1 } = paginationDto;
+    const skip = (page - 1) * limit;
+    return this.pokemonModel.find().limit(limit).skip(skip);
   }
 
   async findOne(term: string) {
