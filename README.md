@@ -22,3 +22,33 @@ npm i -g @nestjs/cli
 ```
 docker-compose up -d
 ```
+
+5. Clone file `.env.template and` rename to `.env`
+6. Fulfill environment variables defined on `.env`
+7. Execute application with
+
+```
+npm run start:dev
+```
+
+8. Fulfill database executing get to
+
+```
+http://localhost:3000/api/seed
+```
+
+## Used stack
+
+- Mongodb
+- Nestjs
+- Typescript
+
+# Production build
+
+1. Create file `.env.prod`
+2. Fill the required environment variables
+3. Build the image
+
+```
+docker-compose -f docker-compose.prod.yml --env-file .env.prod up --build
+```
